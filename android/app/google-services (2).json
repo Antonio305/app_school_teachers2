@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "599294443592",
+    "project_id": "prepaprofesores-e94c7",
+    "storage_bucket": "prepaprofesores-e94c7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599294443592:android:9452a40896cc2d2578d87d",
+        "android_client_info": {
+          "package_name": "com.example.preppa_profesores"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599294443592-n1p1nb4rijqcftaffnp8ae268lcm378a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3BIcu7to2e6EElxazfvstmj-NKeg2Ptk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599294443592-n1p1nb4rijqcftaffnp8ae268lcm378a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
