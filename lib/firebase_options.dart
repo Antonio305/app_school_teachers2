@@ -44,40 +44,38 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAdQkdiaVeFZAiIaSHUciVbYEw4F15BoEM',
-    appId: '1:599294443592:web:ff71b8bb1988f89f78d87d',
-    messagingSenderId: '599294443592',
-    projectId: 'prepaprofesores-e94c7',
-    authDomain: 'prepaprofesores-e94c7.firebaseapp.com',
-    storageBucket: 'prepaprofesores-e94c7.appspot.com',
-    measurementId: 'G-EXCX1BL1EC',
+    apiKey: 'AIzaSyAR88buATStPm2f2GMuyQnXJ5z7G97wLYU',
+    appId: '1:101045364723:web:80c515a459aa1726a65486',
+    messagingSenderId: '101045364723',
+    projectId: 'appteachers-5a050',
+    authDomain: 'appteachers-5a050.firebaseapp.com',
+    storageBucket: 'appteachers-5a050.appspot.com',
+    measurementId: 'G-WW3THB1T5Z',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB3BIcu7to2e6EElxazfvstmj-NKeg2Ptk',
-    appId: '1:599294443592:android:9452a40896cc2d2578d87d',
-    messagingSenderId: '599294443592',
-    projectId: 'prepaprofesores-e94c7',
-    storageBucket: 'prepaprofesores-e94c7.appspot.com',
+    apiKey: 'AIzaSyA40L-G9qj__FOvNtljoIfwdrQTfYOUdxc',
+    appId: '1:101045364723:android:ee578643199a4774a65486',
+    messagingSenderId: '101045364723',
+    projectId: 'appteachers-5a050',
+    storageBucket: 'appteachers-5a050.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDm5N3piDnwjAE95G8BV3c8BHr2Adr6WT0',
-    appId: '1:599294443592:ios:087fdd19f1d5b3b578d87d',
-    messagingSenderId: '599294443592',
-    projectId: 'prepaprofesores-e94c7',
-    storageBucket: 'prepaprofesores-e94c7.appspot.com',
-    iosClientId: '599294443592-qhsusgi37ps225119goq6lrkcji8og2a.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBQ3WBIaWSrZ5xMDmdqLpVFdbkkMbCcc_I',
+    appId: '1:101045364723:ios:b71fbd47e3b2f2eea65486',
+    messagingSenderId: '101045364723',
+    projectId: 'appteachers-5a050',
+    storageBucket: 'appteachers-5a050.appspot.com',
     iosBundleId: 'com.example.preppaProfesores',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDm5N3piDnwjAE95G8BV3c8BHr2Adr6WT0',
-    appId: '1:599294443592:ios:087fdd19f1d5b3b578d87d',
-    messagingSenderId: '599294443592',
-    projectId: 'prepaprofesores-e94c7',
-    storageBucket: 'prepaprofesores-e94c7.appspot.com',
-    iosClientId: '599294443592-qhsusgi37ps225119goq6lrkcji8og2a.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBQ3WBIaWSrZ5xMDmdqLpVFdbkkMbCcc_I',
+    appId: '1:101045364723:ios:b71fbd47e3b2f2eea65486',
+    messagingSenderId: '101045364723',
+    projectId: 'appteachers-5a050',
+    storageBucket: 'appteachers-5a050.appspot.com',
     iosBundleId: 'com.example.preppaProfesores',
   );
 }

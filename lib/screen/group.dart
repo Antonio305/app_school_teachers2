@@ -7,6 +7,6 @@ class ScreenChat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChatPage();
+    return const ChatPage();
   }
 }

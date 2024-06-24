@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:preppa_profesores/providers/showDialogChats.dart';
 
-import '../providers/showDialogSubject.dart';
 
 class DraggableButton extends StatefulWidget {
+  const DraggableButton({super.key});
+
   @override
   _DraggableButtonState createState() => _DraggableButtonState();
 }
@@ -48,7 +49,7 @@ class _DraggableButtonState extends State<DraggableButton> {
                   onPressed: () {
                     ShowDialogChat.showDialogChat(context);
                   },
-                  label: Row(children: const [
+                  label: const Row(children: [
                     Icon(Icons.chat_bubble_outline),
                     Text('CHATS')
                   ]),

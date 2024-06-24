@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ResponseNotifier extends ChangeNotifier {
-  Widget _responseWidget = Text('status window');
+  Widget _responseWidget = const Text('status window');
 
   // getter
   Widget get responseWidget => _responseWidget;

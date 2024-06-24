@@ -4,8 +4,10 @@ import 'package:provider/provider.dart';
 
 import '../Services/chat/socket_servives.dart';
 import '../Services/story_services.dart';
+import '../Services/task_services.dart';
+import '../models/subjects.dart';
 import 'home.dart';
-import 'login.dart';
+import 'login/login.dart';
 
 import 'dart:math' as math;
 
@@ -112,41 +114,17 @@ class _CheckAuthScreenState extends State<CheckAuthScreen> {
      * verificar si hay token
      */
 
-    String? token = await loginServices.storage.read(key: 'token');
+    String? token = await loginServices.readToken();
+    if (token.isNotEmpty) {
+      String? token = await loginServices.storage.read(key: 'token');
 
-    if (token != null) {
-      bool isValid = await loginServices.validateToken();
+      // bool isValid = await loginServices.isValidToekn();
+      bool isValid = await loginServices.validateToken2();
+
       print(isValid);
 
-      if (isValid == false) {
-        // showDialog(
-        //   context: context,
-        //   builder: (context) {
-        //     return AlertDialog(
-        //       title: const Text('Sesión expirada'),
-        //       content: const Text(
-        //           'Su sesión se ha expirado. Por favor, inicie sesión de nuevo.'),
-        //       actions: [
-        //         TextButton(
-        //           onPressed: () {
-        //             // Navigator.of(context).pop();
-        //             Future.microtask(() {
-        //               Navigator.pushReplacement(
-        //                 context,
-        //                 PageRouteBuilder(
-        //                   pageBuilder: (_, __, ___) => const LoginScreen(),
-        //                   transitionDuration: const Duration(seconds: 0),
-        //                 ),
-        //               );
-        //             });
-        //           },
-        //           child: Text('Aceptar'),
-        //         ),
-        //       ],
-        //     );
-        //   },
-        // );
-
+      if (isValid == false ||
+          loginServices.loginResponseTeacher.userData == null) {
         Future.microtask(() {
           Navigator.pushReplacement(
             context,
@@ -158,47 +136,74 @@ class _CheckAuthScreenState extends State<CheckAuthScreen> {
         });
       } else {
         Future.microtask(() async {
-          final teachaerServices =
-              Provider.of<TeachaerServices>(context, listen: false);
           final storyServices =
               Provider.of<StoryServices>(context, listen: false);
+          final loginServices =
+              Provider.of<LoginServices>(context, listen: false);
+          final teacherServices =
+              Provider.of<TeachaerServices>(context, listen: false);
+          final subjectServices =
+              Provider.of<SubjectServices>(context, listen: false);
+          final socketS = Provider.of<SocketService>(context, listen: false);
 
-          await teachaerServices.getForId();
+          teacherServices.teacherForID = loginServices.teachers!;
 
+          await subjectServices.getSubjectsForTeacher();
           await storyServices.getAllStoryByStatusTrue();
+          await onLoadingTaskStatusTrue();
 
-          // conecion apra el socker desde el auth
-          final socketS =
-              // ignore: use_build_context_synchronously
-              Provider.of<SocketService>(context, listen: false);
           await socketS.connect();
 
+          // ignore: use_build_context_synchronously
           Navigator.pushReplacement(
               context,
               PageRouteBuilder(
-                  pageBuilder: (_, __, ___) => const HomePage(),
+                  pageBuilder: (_, __, ___) => const DashBoard(),
                   transitionDuration: const Duration(seconds: 0)));
 
           //  Navigator.of(context).pushReplacementNamed('home');
         });
       }
-
-      // return Container();
     } else {
-      Future.microtask(() {
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (_, __, ___) => const LoginScreen(),
-            transitionDuration: const Duration(seconds: 0),
-          ),
-        );
-      });
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, __, ___) => const LoginScreen(),
+          transitionDuration: const Duration(seconds: 0),
+        ),
+      );
     }
+  }
+
+  List<String> listIdSubjects(List<Subjects> subjects) {
+    List<String> idSubject = [];
+    for (var subject in subjects) {
+      idSubject.add(subject.uid);
+    }
+    return idSubject;
+  }
+
+  Future<void> onLoadingTaskStatusTrue() async {
+    final subjectServices =
+        Provider.of<SubjectServices>(context, listen: false);
+    final taskServices = Provider.of<TaskServices>(context, listen: false);
+
+    List<Subjects> subjects = subjectServices.subjects;
+
+    if (subjects.isEmpty) {
+      return;
+    }
+
+    final idSubject = listIdSubjects(subjects);
+
+    await taskServices.getTaskStatusTrue(idSubject);
   }
 }
 
 class LoadingAnimation extends StatefulWidget {
+  const LoadingAnimation({super.key});
+
   @override
   _LoadingAnimationState createState() => _LoadingAnimationState();
 }
@@ -241,14 +246,14 @@ class _LoadingAnimationState extends State<LoadingAnimation>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildCube(Colors.red),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               _buildCube(Colors.green),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               _buildCube(Colors.blue),
             ],
           ),
         ),
-        Text('Cargando', style: TextStyle(fontSize: 24)),
+        const Text('Cargando', style: TextStyle(fontSize: 24)),
       ],
     );
   }

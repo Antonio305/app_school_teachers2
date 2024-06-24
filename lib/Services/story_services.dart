@@ -19,13 +19,12 @@ class StoryServices extends ChangeNotifier {
   List<Storys> storys = [];
   List<Storys> storysByStatusTrue = [];
 
-final storage = SecureStorage.storage();
+  final storage = SecureStorage.storage();
 
   bool status = false;
 
   // intancia del LOCALHOST
   String baserUrl = ConectionHost.baseUrl;
-
 
   // function by create stry
 
@@ -67,7 +66,7 @@ final storage = SecureStorage.storage();
     };
     // Uri url = Uri.http(baserUrl, '/api/story');
     final url = ConectionHost.myUrl('/api/story', {});
-print(url);
+    print(url);
     final resp =
         await http.post(url, headers: headers, body: json.encode(data));
 
@@ -78,8 +77,6 @@ print(url);
 
     return respBody;
   }
-
-  
 
   // get alll sory
   Future getAllStory() async {
@@ -100,17 +97,15 @@ print(url);
   Future getAllStoryByStatusTrue() async {
     Response resp = await myUrl('/api/story/statusTrue');
 
-    // final respBody = json.decode(resp.body);
-    List<dynamic> respBody = json.decode(resp.body);
+    final respBody = json.decode(resp.body);
+    final List<dynamic> stories = respBody['stories'];
 
-    final story = respBody.map((e) => Storys.fromJson(e)).toList();
+    final story = stories.map((e) => Storys.fromJson(e)).toList();
 
     storysByStatusTrue = [...story];
     notifyListeners();
     print(respBody);
   }
-
-
 
   Future deleteStoryBySId(String id) async {
     // Response resp = await myUrl('/api/story/$id');

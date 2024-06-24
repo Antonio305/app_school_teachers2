@@ -8,7 +8,7 @@ class InputDecorations {
   }) {
     return InputDecoration(
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(10),
         ),
         
         hintText: hintText,

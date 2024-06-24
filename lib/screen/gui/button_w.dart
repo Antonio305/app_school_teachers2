@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:preppa_profesores/local_storage/get_picture_path.dart';
 
 import 'com/imageButton.dart';
 
@@ -10,7 +9,7 @@ class ButtonWindow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return const Expanded(
       flex: 2,
       child: Center(
         child: GetImageButton(),

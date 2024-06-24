@@ -1,9 +1,7 @@
-import 'package:http/http.dart' as http;
-
 class ConectionHost {
 // casita
 
-  static String baseUrl = '192.168.1.66:3000';
+  static String baseUrl = '192.168.1.65:3002';
 
 // https://prepabochil.fly.dev/api/story
 //  static String baseUrl = "localhost:8080";
@@ -12,8 +10,8 @@ class ConectionHost {
 
   static Uri myUrl(String path, Map<String, dynamic>? query) {
     final url = Uri.http(baseUrl, path);
-    // final url = 'https://prepabochil.fly.dev' + ${path};
-    // final url  = Uri.https('prepabochil.fly.dev', path);
+    // final url = 'https://prepabochil.fly.dev' + ${path};ws
+    // final url = Uri.https('prepabochil3.fly.dev', path);
     return url;
   }
 

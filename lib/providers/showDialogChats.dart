@@ -6,27 +6,27 @@ class ShowDialogChat extends ChangeNotifier {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Seleccionar sala de chat'),
+          title: const Text('Seleccionar sala de chat'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 // Mostrar una lista de salas de chat con alumnos y grupos
                 ListTile(
-                  title: Text('CHAT GRUPAL'),
+                  title: const Text('CHAT GRUPAL'),
                   onTap: () {
                     // Seleccionar la sala de chat 
                     Navigator.pushNamed(context, 'groupChat');
                   },
                 ),
                 ListTile(
-                  title: Text('CHAT GRUPAL'),
+                  title: const Text('CHAT GRUPAL'),
                   onTap: () {
                     Navigator.pushNamed(context, 'chats');
                     // Seleccionar la sala de chat 2
                   },
                 ),
                 ListTile(
-                  title: Text(' CHAT UNO A UNO'),
+                  title: const Text(' CHAT UNO A UNO'),
                   onTap: () {
                     // Seleccionar la sala de chat 3
                   },
@@ -36,7 +36,7 @@ class ShowDialogChat extends ChangeNotifier {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancelar'),
+              child: const Text('Cancelar'),
               onPressed: () {
                 Navigator.of(context).pop();
               },

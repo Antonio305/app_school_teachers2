@@ -1,21 +1,18 @@
-// To parse this JSON data, do
-//
-//     final ratings = ratingsFromJson(jsonString);
-
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
 class StudentByGrades {
   String id;
-  StudentGrades student;
+  Student student;
   String group;
   String semestre;
   String subject;
-  double parcial1;
-  double parcial2;
-  double parcial3;
+  int parcial1;
+  int parcial2;
+  int parcial3;
   double semesterGrade;
   int v;
+  DateTime updatedAt;
+  String generation;
 
   StudentByGrades({
     required this.id,
@@ -28,7 +25,38 @@ class StudentByGrades {
     required this.parcial3,
     required this.semesterGrade,
     required this.v,
+    required this.updatedAt,
+    required this.generation,
   });
+
+  StudentByGrades copyWith({
+    String? id,
+    Student? student,
+    String? group,
+    String? semestre,
+    String? subject,
+    int? parcial1,
+    int? parcial2,
+    int? parcial3,
+    double? semesterGrade,
+    int? v,
+    DateTime? updatedAt,
+    String? generation,
+  }) =>
+      StudentByGrades(
+        id: id ?? this.id,
+        student: student ?? this.student,
+        group: group ?? this.group,
+        semestre: semestre ?? this.semestre,
+        subject: subject ?? this.subject,
+        parcial1: parcial1 ?? this.parcial1,
+        parcial2: parcial2 ?? this.parcial2,
+        parcial3: parcial3 ?? this.parcial3,
+        semesterGrade: semesterGrade ?? this.semesterGrade,
+        v: v ?? this.v,
+        updatedAt: updatedAt ?? this.updatedAt,
+        generation: generation ?? this.generation,
+      );
 
   factory StudentByGrades.fromRawJson(String str) =>
       StudentByGrades.fromJson(json.decode(str));
@@ -38,20 +66,22 @@ class StudentByGrades {
   factory StudentByGrades.fromJson(Map<String, dynamic> json) =>
       StudentByGrades(
         id: json["_id"],
-        student: StudentGrades.fromJson(json["student"]),
+        student: Student.fromJson(json["student"]),
         group: json["group"],
         semestre: json["semestre"],
         subject: json["subject"],
-        parcial1: json["parcial1"].toDouble(),
-        parcial2: json["parcial2"].toDouble(),
-        parcial3: json["parcial3"].toDouble(),
+        parcial1: json["parcial1"],
+        parcial2: json["parcial2"],
+        parcial3: json["parcial3"],
         semesterGrade: json["semesterGrade"]?.toDouble(),
         v: json["__v"],
+        updatedAt: DateTime.parse(json["updatedAt"]),
+        generation: json["generation"],
       );
 
   Map<String, dynamic> toJson() => {
         "_id": id,
-        "student": student.toJson(),
+        "student": student?.toJson(),
         "group": group,
         "semestre": semestre,
         "subject": subject,
@@ -60,135 +90,54 @@ class StudentByGrades {
         "parcial3": parcial3,
         "semesterGrade": semesterGrade,
         "__v": v,
+        "updatedAt": updatedAt.toIso8601String(),
+        "generation": generation,
       };
 }
 
-class StudentGrades {
-  StudentsTutor studentTutor;
+class Student {
   String name;
   String lastName;
   String secondName;
-  String gender;
-  DateTime dateOfBirth;
-  String bloodGrade;
-  String curp;
-  int age;
-  String town;
-  int numberPhone;
-  bool status;
-  String rol;
-  String group;
-  List<String> semestre;
-  List<String> subjects;
-  String generation;
-  String tuition;
   String uid;
 
-  StudentGrades({
-    required this.studentTutor,
+  Student({
     required this.name,
     required this.lastName,
     required this.secondName,
-    required this.gender,
-    required this.dateOfBirth,
-    required this.bloodGrade,
-    required this.curp,
-    required this.age,
-    required this.town,
-    required this.numberPhone,
-    required this.status,
-    required this.rol,
-    required this.group,
-    required this.semestre,
-    required this.subjects,
-    required this.generation,
-    required this.tuition,
     required this.uid,
   });
 
-  factory StudentGrades.fromRawJson(String str) =>
-      StudentGrades.fromJson(json.decode(str));
+  String get nameStudent => "$name $lastName $secondName";
+
+  Student copyWith({
+    String? name,
+    String? lastName,
+    String? secondName,
+    String? uid,
+  }) =>
+      Student(
+        name: name ?? this.name,
+        lastName: lastName ?? this.lastName,
+        secondName: secondName ?? this.secondName,
+        uid: uid ?? this.uid,
+      );
+
+  factory Student.fromRawJson(String str) => Student.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory StudentGrades.fromJson(Map<String, dynamic> json) => StudentGrades(
-        studentTutor: StudentsTutor.fromJson(json["student_tutor"]),
+  factory Student.fromJson(Map<String, dynamic> json) => Student(
         name: json["name"],
         lastName: json["lastName"],
         secondName: json["secondName"],
-        gender: json["gender"],
-        dateOfBirth: DateTime.parse(json["dateOfBirth"]),
-        bloodGrade: json["bloodGrade"],
-        curp: json["curp"],
-        age: json["age"],
-        town: json["town"],
-        numberPhone: json["numberPhone"],
-        status: json["status"],
-        rol: json["rol"],
-        group: json["group"],
-        semestre: List<String>.from(json["semestre"].map((x) => x)),
-        subjects: List<String>.from(json["subjects"].map((x) => x)),
-        generation: json["generation"],
-        tuition: json["tuition"],
         uid: json["uid"],
       );
 
   Map<String, dynamic> toJson() => {
-        "student_tutor": studentTutor.toJson(),
         "name": name,
         "lastName": lastName,
         "secondName": secondName,
-        "gender": gender,
-        "dateOfBirth": dateOfBirth.toIso8601String(),
-        "bloodGrade": bloodGrade,
-        "curp": curp,
-        "age": age,
-        "town": town,
-        "numberPhone": numberPhone,
-        "status": status,
-        "rol": rol,
-        "group": group,
-        "semestre": List<dynamic>.from(semestre.map((x) => x)),
-        "subjects": List<dynamic>.from(subjects.map((x) => x)),
-        "generation": generation,
-        "tuition": tuition,
         "uid": uid,
-      };
-}
-
-class StudentsTutor {
-  String nameTutor;
-  String lastNameTutor;
-  String secondNameTutor;
-  String kinship;
-  int numberPhoneTutor;
-
-  StudentsTutor({
-    required this.nameTutor,
-    required this.lastNameTutor,
-    required this.secondNameTutor,
-    required this.kinship,
-    required this.numberPhoneTutor,
-  });
-
-  factory StudentsTutor.fromRawJson(String str) =>
-      StudentsTutor.fromJson(json.decode(str));
-
-  String toRawJson() => json.encode(toJson());
-
-  factory StudentsTutor.fromJson(Map<String, dynamic> json) => StudentsTutor(
-        nameTutor: json["nameTutor"],
-        lastNameTutor: json["lastNameTutor"],
-        secondNameTutor: json["secondNameTutor"],
-        kinship: json["kinship"],
-        numberPhoneTutor: json["numberPhoneTutor"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "nameTutor": nameTutor,
-        "lastNameTutor": lastNameTutor,
-        "secondNameTutor": secondNameTutor,
-        "kinship": kinship,
-        "numberPhoneTutor": numberPhoneTutor,
       };
 }

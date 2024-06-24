@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ScreenGroupChat extends StatefulWidget {
+  const ScreenGroupChat({super.key});
+
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -18,7 +20,7 @@ class _ChatScreenState extends State<ScreenGroupChat> {
 
   Widget _buildTextComposer() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 8.0),
+      margin: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
         children: <Widget>[
           Flexible(
@@ -29,13 +31,13 @@ class _ChatScreenState extends State<ScreenGroupChat> {
                     () {}); // Actualizar el estado para habilitar/deshabilitar el botón de envío
               },
               onSubmitted: _handleSubmitted,
-              decoration: InputDecoration.collapsed(hintText: 'Enviar mensaje'),
+              decoration: const InputDecoration.collapsed(hintText: 'Enviar mensaje'),
             ),
           ),
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 4.0),
+            margin: const EdgeInsets.symmetric(horizontal: 4.0),
             child: IconButton(
-              icon: Icon(Icons.send),
+              icon: const Icon(Icons.send),
               onPressed: _textController.text.isEmpty
                   ? null
                   : () => _handleSubmitted(_textController.text),
@@ -76,7 +78,7 @@ class _ChatScreenState extends State<ScreenGroupChat> {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: Text('Chat')),
+      appBar: AppBar(title: const Text('Chat')),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Row(
@@ -103,7 +105,7 @@ class _ChatScreenState extends State<ScreenGroupChat> {
                 children: <Widget>[
                   Flexible(
                     child: ListView.builder(
-                      padding: EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8.0),
                       reverse: true,
                       itemCount: _messages.length,
                       itemBuilder: (BuildContext context, int index) {
@@ -111,7 +113,7 @@ class _ChatScreenState extends State<ScreenGroupChat> {
                       },
                     ),
                   ),
-                  Divider(height: 1.0),
+                  const Divider(height: 1.0),
                   Container(
                     decoration: BoxDecoration(color: Theme.of(context).cardColor),
                     child: _buildTextComposer(),

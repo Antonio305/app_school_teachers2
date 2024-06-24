@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:preppa_profesores/models/menu_option.dart';
+import 'package:preppa_profesores/providers/isMobile.dart';
 import 'package:provider/provider.dart';
 import 'package:preppa_profesores/Services/login_provider.dart';
 import 'package:preppa_profesores/providers/menu_option_provider.dart';
@@ -29,9 +31,6 @@ class _MenuState extends State<Menu> {
   // hacemos la intancia de la clase
   @override
   Widget build(BuildContext context) {
-    // final teacher = Provider.of<TeachaerServices>(context);
-    // teacher.getTeachers();
-
     final size = MediaQuery.of(context).size;
 
     // hamoes la instancia del as opcioens
@@ -41,28 +40,14 @@ class _MenuState extends State<Menu> {
     final menuProvider = Provider.of<MenuOptionProvider>(context);
 
     // create styl text
-    const styleTitle =
-        TextStyle(color: Color(0xffF9F9FF), fontSize: 24); // title
-    const styleTextButton = TextStyle(color: Color(0xffF9F9FF), fontSize: 14);
+    const styleTitle = TextStyle(fontSize: 24); // title
+    const styleTextButton = TextStyle(fontSize: 14);
 
-    return Container(
-      width: Platform.isMacOS || Platform.isWindows
-          ? size.width * 0.18
-          : size.width * 0.7,
-
-      // height: size.height * 0.5,
-      margin: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        // color: const Color(0xff6138FF),
-        // color: Color(0xff12152A),   // definirivo
-        color: Color(0xff13162C),
-
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
+    return Drawer(
+      width: IsMobile.isMobile() ? size.width * 0.853 : size.width * 0.17,
+      child: SingleChildScrollView(
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // const Text('Control Esoclar', style: styleTitle),
@@ -82,69 +67,19 @@ class _MenuState extends State<Menu> {
             ),
 
             const SizedBox(
-              height: 10,
+              height: 50,
             ),
-            Divider(),
+            const Divider(),
 
             const SizedBox(
               height: 10,
             ),
 
             // mostrmos la lsita de las opciones
-            SizedBox(
-              height: 300,
-              width: Platform.isMacOS || Platform.isWindows
-                  ? size.width * 0.2
-                  : size.width,
-              child: ListView.builder(
-                itemCount: menus.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return GestureDetector(
-                    onTap: () {
-                      menuProvider.itemMenu = index;
-                    },
-                    child: Container(
-                      // decoration de container
-                      decoration: BoxDecoration(
-                        color: menuProvider.itemMenuGet == index
-                            ? Colors.black12
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-
-                      height: 50,
-                      width: size.width * 0.2,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Icon(
-                              menus[index].icon,
-                              size: menuProvider.itemMenuGet == index
-                                  ? 21.0
-                                  : 20.0,
-                              color: const Color(0xfff2F2FF),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              menus[index].name.toString(),
-                              style: menuProvider.itemMenuGet == index
-                                  ? const TextStyle(fontSize: 16)
-                                  : styleTextButton,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
+            _menuItems(size, menus, menuProvider, styleTextButton),
 
             // boton apra cambiar el tema de oscuro a blanco
-//TODO: VERIFICAR LO LE SWITVH PARA EL CAMBIO DEL
+            //TODO: VERIFICAR LO LE SWITVH PARA EL CAMBIO DEL
 
             // SwitchListTile.adaptive(
             //     title: const Text('Tema'),
@@ -164,12 +99,12 @@ class _MenuState extends State<Menu> {
             //       setState(() {});
             //     }),
 
-            const SizedBox(
-              height: 10,
-            ),
+            // const SizedBox(
+            //   height: 10,
+            // ),
 
             // botor para salir del programa
-            Divider(),
+            const Divider(),
 
             const SizedBox(
               height: 50,
@@ -193,6 +128,62 @@ class _MenuState extends State<Menu> {
       ),
     );
   }
-}
 
-// CRMEOS UNA LISTA DE TIPO  WIDGET
+  SizedBox _menuItems(Size size, List<OptionMenu> menus,
+      MenuOptionProvider menuProvider, TextStyle styleTextButton) {
+    return SizedBox(
+      height: 300,
+      width: Platform.isMacOS || Platform.isWindows
+          ? size.width * 0.2
+          : size.width,
+      child: ListView.builder(
+        itemCount: menus.length,
+        itemBuilder: (BuildContext context, int index) {
+          return GestureDetector(
+            onTap: () {
+              menuProvider.itemMenu = index;
+            },
+            child: Container(
+              // decoration de container
+              decoration: BoxDecoration(
+                color: menuProvider.itemMenuGet == index
+                    ? Colors.black12
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(5),
+              ),
+
+              height: 50,
+              width: size.width * 0.2,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Icon(
+                      menus[index].icon,
+                      size: menuProvider.itemMenuGet == index ? 21.0 : 20.0,
+                      // color: const Color(0xfff2F2FF),
+                    ),
+                    const SizedBox(
+                      width: 40,
+                    ),
+                    Text(
+                      menus[index].name.toString(),
+                      style: menuProvider.itemMenuGet == index
+                          ? const TextStyle(fontSize: 16)
+                          : styleTextButton,
+                    ),
+                    const Spacer(),
+                    const Icon(Icons.chevron_right_rounded)
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}

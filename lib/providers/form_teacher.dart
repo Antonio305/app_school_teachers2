@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:preppa_profesores/models/teacherRegister.dart';
 
-import '../models/teacher.dart';
 
 // import '../models/teacher.dart';
 
@@ -9,7 +9,7 @@ class TeacherFormProvider extends ChangeNotifier {
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  Teachers teacher = Teachers(
+  TeacherRegister teacher = TeacherRegister(
       name: "",
       lastName: "",
       secondName: "",
@@ -19,7 +19,11 @@ class TeacherFormProvider extends ChangeNotifier {
       status: true,
       rol: "",
       tuition: "",
-      uid: "");
+      uid: "",
+      email: '',
+      numberPhone: '', userLogin: '');
+
+  TeacherFormProvider(TeacherRegister teacherRegister);
 
   // TeacherFormProvider(this.teacher);
 
@@ -27,8 +31,8 @@ class TeacherFormProvider extends ChangeNotifier {
 
 // retorna un voleado si si estan validado los datos
   bool isValidForm() {
-    print(teacher!.name);
-    print(teacher!.secondName + teacher!.lastName);
+     (teacher.name);
+    print(teacher.secondName + teacher.lastName);
 
     return formKey.currentState!.validate();
   }

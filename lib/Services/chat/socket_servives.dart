@@ -18,11 +18,15 @@ class SocketService with ChangeNotifier {
 
   Future<void> connect() async {
     // hacemos la instancia del token
+
     final token = await LoginServices.getToken();
 
     // Dart client
+    String s = Enviroment.url.toString();
+
+    // _socket = IO.io(s, {
     _socket = IO.io(Enviroment.checkUrlSocket, {
-      // _socket = IO.io('http:localhost:3000', {
+      // _socket = IO.io('http:localhost:3000', {cal
 
       'transports': ['websocket'],
       'autoConnect': true,

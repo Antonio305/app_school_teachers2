@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "preppa_profesores" "\0"
+            VALUE "FileDescription", "app_school_teachers2" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "preppa_profesores" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2022 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "preppa_profesores.exe" "\0"
-            VALUE "ProductName", "preppa_profesores" "\0"
+            VALUE "InternalName", "app_school_teachers2" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
+            VALUE "OriginalFilename", "app_school_teachers2.exe" "\0"
+            VALUE "ProductName", "app_school_teachers2" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

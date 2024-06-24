@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:preppa_profesores/models/menu_option.dart';
 import 'package:preppa_profesores/screen/group.dart';
-import 'package:preppa_profesores/screen/student.dart';
-import '../models/subjects.dart';
-import '../screen/chat_page.dart';
+import 'package:preppa_profesores/screen/student/student.dart';
 import '../screen/screen.dart';
-import '../screen/task.dart';
+import '../screen/task/task.dart';
 import '../screen/tutor.dart';
+
+import 'package:mime/mime.dart';
 
 class AppRoute {
   // haremos una modiificacion ala rutas en la cual la definoremos como una lista de
@@ -15,8 +15,8 @@ class AppRoute {
     OptionMenu(
         route: 'home',
         icon: Icons.home,
-        name: 'Home Page',
-        screen: const HomePage()),
+        name: 'Inicio',
+        screen: const DashBoard()),
     OptionMenu(
         route: 'Students',
         icon: Icons.security_update_warning_sharp,
@@ -39,7 +39,7 @@ class AppRoute {
     //     name: 'Horarios',
     //     screen: Horarios()),
 
-    // Button para la opcion del os grupos
+    // Button para la opcion del os
     OptionMenu(
         route: 'chats',
         icon: Icons.group,
@@ -50,12 +50,12 @@ class AppRoute {
         icon: Icons.add,
         name: "Tutor",
         screen: const TutorScreen()),
-      
-        // OptionMenu(
-        // route: 'cha',
-        // icon: Icons.add,
-        // name: "Chats",
-        // screen: ChatPage()),
+
+    // OptionMenu(
+    // route: 'cha',
+    // icon: Icons.add,
+    // name: "Chats",
+    // screen: ChatPage()),
     OptionMenu(
         route: 'profile',
         icon: Icons.person_outline_rounded,
@@ -66,6 +66,6 @@ class AppRoute {
   static const initialRoute = 'home';
 
   static Map<String, Widget Function(BuildContext)> routes2 = {
-    'login': (context) => const HomePage(),
+    'login': (context) => const DashBoard(),
   };
 }

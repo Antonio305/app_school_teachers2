@@ -9,7 +9,6 @@ import 'package:http/http.dart' as http;
 import 'package:preppa_profesores/Services/secure_storage.dart';
 import 'package:preppa_profesores/models/host.dart';
 import 'package:preppa_profesores/models/rating.dart';
-import 'package:preppa_profesores/models/student.dart';
 
 import '../models/student_byGrades.dart';
 
@@ -36,7 +35,8 @@ class RatingServices extends ChangeNotifier {
       parcial2: 0.0,
       parcial3: 0.0,
       semesterGrade: 0.0,
-      v: 0);
+      v: 0,
+      generation: '');
 // CRUD
 
   // INSTANCIA DEL STORAGE PARA OBBTENER ELE TOKEN GUARDADO EN LA BASE DE DATOS
@@ -56,35 +56,48 @@ class RatingServices extends ChangeNotifier {
     // print(respBody);
   }
 
+  late RatingResponse ratingResponse;
+  int statusCodes = 0;
 // calificacion por materia
-  Future<Map<String, dynamic>> getRatingsForSubject(
-      String idStudent, String idSubject) async {
+  Future getRatingsForSubject(String idStudent, String idSubject) async {
+    String? token = await storage.read(key: 'token');
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'x-token': token!
+    };
 /**
  * paramtros : ID STUDENT- ID SUBJECT
  */
 
     // final url = Uri.http(baseUrl, '/api/rating/$idStudent/$idSubject/rating');
-    final url =
-        ConectionHost.myUrl('/api/rating/$idStudent/$idSubject/rating', {});
+    final url = ConectionHost.myUrl(
+        '/api/rating/teacher/$idStudent/$idSubject/rating', {});
 
-    print(url);
-    final resp = await http.get(url);
+    status = true;
+    notifyListeners();
+    // print(url);
+    final resp = await http.get(url, headers: headers);
 
     // dcodificacion del string
     final Map<String, dynamic> respBody = json.decode(resp.body);
+    if (resp.statusCode == 401) {
+      // ratingResponse.rating = ;
+      status = false;
 
-    //  print(respBody.containsKey('msg' )); indica un true
-
-    // if (respBody.containsKey('msg')) {
-
-    //   print('NO HAY calificaciones ');
-    //   // podemos ejecutar una funcio para mostar de que no hay datos como con un dialog
-    //   return null;
-    // }
-    // print(respBody);
-    // rating = Ratings.fromMap(respBody);
-
-    return respBody;
+      statusCodes = 401;
+      notifyListeners();
+    }
+    if (resp.statusCode == 404) {
+      status = false;
+      statusCodes = 404;
+      notifyListeners();
+    }
+    if (resp.statusCode == 200) {
+      ratingResponse = RatingResponse.toJson(resp.body);
+      statusCodes = 200;
+      status = false;
+      notifyListeners();
+    }
   }
 
   // metodo para ingredaingres5ar las calificaciones
@@ -117,8 +130,7 @@ class RatingServices extends ChangeNotifier {
     };
     // final url = Uri.http(baseUrl, '/api/rating/teacher/idRating/rating');
 
-    final url =
-        ConectionHost.myUrl('/api/rating/teacher/$idRating/rating', {});
+    final url = ConectionHost.myUrl('/api/rating/teacher/$idRating/rating', {});
 
     Map<String, dynamic> data = {
       'parcial1': partial1,
@@ -136,8 +148,8 @@ class RatingServices extends ChangeNotifier {
   // GET STUDENT BY RATINGS
 
 // MEJROES CALIFICACIONES
-  void getStudentByBetterGrades(
-      String idGroup, String idSubject, String partial) async {
+  void getStudentByBetterGrades(String idGroup, String idSubject,
+      String partial, String generation) async {
     String? token = await storage.read(key: 'token');
     final Map<String, String> headers = {
       'Content-Type': 'application/json',
@@ -150,20 +162,30 @@ class RatingServices extends ChangeNotifier {
 
     // final url = Uri.http(baseUrl,
     //     '/api/rating/teacher/$idGroup/$idSubject/$partial/betterGrades');
+
     final url = ConectionHost.myUrl(
-        '/api/rating/teacher/$idGroup/$idSubject/$partial/betterGrades', {});
+        '/api/rating/teacher/$idGroup/$idSubject/$partial/$generation/betterGrades',
+        {});
 
     final resp = await http.get(url, headers: headers);
 
-    final List<dynamic> respBody = json.decode(resp.body);
+    Map<String, dynamic> respBody = json.decode(resp.body);
     print(respBody);
-    final studentRating =
-        respBody.map((e) => StudentByGrades.fromJson(e)).toList();
 
-    studentByRating = [...studentRating];
+    if (resp.statusCode == 404) {
+      studentByRating = [];
+      status = false;
+      notifyListeners();
+    }
+    if (resp.statusCode == 200) {
+      List<dynamic> studentRatings = respBody['ratings'];
+      final studentRating =
+          studentRatings.map((e) => StudentByGrades.fromJson(e)).toList();
+      studentByRating = [...studentRating];
 
-    status = false;
-    notifyListeners();
+      status = false;
+      notifyListeners();
+    }
   }
 
 // CALIFICACIONES  REGULARES

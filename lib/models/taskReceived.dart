@@ -5,16 +5,18 @@
 import 'dart:convert';
 
 class TaskReceived {
-  TaskReceived({
-     this.id,
-    required this.task,
-    required this.student,
-    required this.rating,
-    required this.isQualified,
-    this.comments,
-    required this.v,
-    this.archivos,
-  });
+  TaskReceived(
+      {this.id,
+      required this.task,
+      required this.student,
+      required this.rating,
+      required this.isQualified,
+      this.comments,
+      required this.subject,
+      required this.v,
+      this.archivos,
+      required this.createdAt,
+      required this.updatedAt});
 
   String? id;
   TaskReceiveds task;
@@ -22,8 +24,17 @@ class TaskReceived {
   double rating;
   bool isQualified;
   String? comments;
+  Subject subject;
   int v;
-  String? archivos;
+  List<dynamic>? archivos;
+  // para saber la fecha de entrega
+  // DateTime? createdAt;
+  DateTime createdAt;
+  DateTime updatedAt;
+
+  String get nameLastNameStudent => "${student.name} ${student.lastName}";
+    String get nameLastNameStudentSecondName => "${student.name} ${student.lastName} ${student.secondName}";
+
 
   factory TaskReceived.fromRawJson(String str) =>
       TaskReceived.fromJson(json.decode(str));
@@ -38,8 +49,11 @@ class TaskReceived {
         // rating: double.parse(json["rating"]),
         isQualified: json["isQualified"],
         comments: json["comments"],
+        subject: Subject.fromJson(json['subject']),
         v: json["__v"],
         archivos: json["archivos"],
+        createdAt: DateTime.parse(json['createdAt']),
+        updatedAt: DateTime.parse(json['updatedAt']),
       );
 
   Map<String, dynamic> toJson() => {
@@ -49,9 +63,29 @@ class TaskReceived {
         "rating": rating,
         "isQualified": isQualified,
         "comments": comments,
+        "subject": subject,
         "__v": v,
         "archivos": archivos,
       };
+
+  TaskReceived copyWith() {
+    return TaskReceived(
+        id: id,
+        task: task,
+        student: student,
+        rating: rating,
+        isQualified: isQualified,
+        comments: comments,
+        subject: subject,
+        archivos: archivos,
+        createdAt: createdAt,
+        updatedAt: updatedAt,
+        v: v);
+  }
+
+  String get deliveryDate => createdAt.toString().substring(0, 10);
+  String get studentName =>
+      "${student.name} ${student.lastName}  ${student.secondName}";
 }
 
 class TaskStudent {
@@ -97,7 +131,7 @@ class TaskReceiveds {
     required this.group,
     required this.userTeacher,
     required this.v,
-     this.archivos,
+    this.archivos,
   });
 
   String id;
@@ -108,7 +142,7 @@ class TaskReceiveds {
   String group;
   String userTeacher;
   int v;
-  String? archivos;
+  List<dynamic>? archivos;
 
   factory TaskReceiveds.fromRawJson(String str) =>
       TaskReceiveds.fromJson(json.decode(str));
@@ -137,5 +171,38 @@ class TaskReceiveds {
         "userTeacher": userTeacher,
         "__v": v,
         "archivos": archivos,
+      };
+}
+
+class Subject {
+  String name;
+  String uid;
+
+  Subject({
+    required this.name,
+    required this.uid,
+  });
+
+  Subject copyWith({
+    String? name,
+    String? uid,
+  }) =>
+      Subject(
+        name: name ?? this.name,
+        uid: uid ?? this.uid,
+      );
+
+  factory Subject.fromRawJson(String str) => Subject.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  factory Subject.fromJson(Map<String, dynamic> json) => Subject(
+        name: json["name"],
+        uid: json["uid"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "name": name,
+        "uid": uid,
       };
 }

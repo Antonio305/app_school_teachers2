@@ -4,20 +4,31 @@ import 'dart:io';
 import 'package:cross_file/cross_file.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:preppa_profesores/Services/secure-storage.dart';
 import 'package:preppa_profesores/Services/secure_storage.dart';
 import 'package:preppa_profesores/models/host.dart';
-import 'package:preppa_profesores/models/taskReceived.dart';
+import 'package:preppa_profesores/widgets/showDialogs/showDialogLogin.dart';
 
-import '../models/task.dart';
+import '../models/task/tasks.dart';
+import '../models/taskResponse.dart';
 
 class TaskServices extends ChangeNotifier {
+  bool status = false;
+
+  // para las taras selecionadaA PARA EDITAR
+  late Tasks taskSelected;
+
 // we create task list for task tatus = true
   List<Tasks> taskForStatusTrue = [];
 
   List<Tasks> tasks = [];
-
   List<Tasks> tasksForSubject = [];
+
+// To save tasks filtered by subject
+  List<Tasks?> taskBySubject = [];
+
+  Tasks? selectedTask;
 
   // TaskElement task = TaskElement(id: '0', subject: Subject(msg: '', subject: ''), nameTask: '', description: '', status: true, generation: '', semestre: '', group: '', userTeacher: '', v: 0);
 
@@ -35,8 +46,14 @@ class TaskServices extends ChangeNotifier {
 //TOOD: la clase la que se hacreado
   // creatar tareas sin el archivo
 
-  Future<String> createTaskNotFile(String nameTask, String descriptionTask,
-      String idSubject, String idGroup, DateTime expiredAt) async {
+  Future<dynamic> createTaskNotFile(
+      String nameTask,
+      String descriptionTask,
+      String idSubject,
+      String semestre,
+      String idGroup,
+      String nameSubject,
+      DateTime expiredAt) async {
     String? token = await storage.read(key: 'token'); // creat url
 
     // final url = Uri.http(baseUrl, '/api/tasks');
@@ -51,23 +68,40 @@ class TaskServices extends ChangeNotifier {
       "nameTask": nameTask,
       "description": descriptionTask,
       "group": idGroup,
+      "nameSubject": nameSubject,
       "expiredAt": expiredAt.toString()
     };
+    status = true;
+    notifyListeners();
 
     final resp =
         await http.post(url, headers: headers, body: json.encode(data));
 
     final Map<dynamic, dynamic> respBody = json.decode(resp.body);
 
-    print(respBody);
-    //  final taskElement = TaskElement.fromMap(respBody['task']);
+    if (resp.statusCode == 401) {
+      // ShowDialogLogin.showDialogLogin(context);
+      status = false;
+      notifyListeners();
+      return false;
+    }
 
-    // task = Task.fromMap(respBody);
-    // tasks = [task];
+    if (resp.statusCode == 404) {
+      status = false;
+      notifyListeners();
+      return respBody['msg'];
+    }
 
-    return respBody['task']['_id'];
+    if (resp.statusCode == 201) {
+      Tasks newTask = Tasks.fromJson(respBody['newTask']);
+      selectedTask = newTask;
+      status = false;
+      notifyListeners();
+      // return respBody['task']['_id'];
+      return;
+    }
 
-    // print(respBody);
+    return respBody['msg'];
   }
 
   /* 
@@ -75,6 +109,7 @@ class TaskServices extends ChangeNotifier {
       - ADD  FILE FOR TASKS
       -  REQUIRED ID
    */
+
   Future updateTaskAddFile(String id, XFile? pathFile) async {
     String? token = await storage.read(key: 'token');
 
@@ -192,7 +227,11 @@ class TaskServices extends ChangeNotifier {
 .. task - status = true
 */
 
-  Future getTaskStatusTrue(List<String> subject) async {
+// get task by status true
+  TaskResponse? taskResponse;
+  int statusCode = 0;
+
+  Future<String?> getTaskStatusTrue(List<String> subject) async {
     String? token = await storage.read(key: 'token');
 
     final Map<String, String> headers = {
@@ -202,23 +241,53 @@ class TaskServices extends ChangeNotifier {
 
 // url get all taks teacher
     // final url = Uri.http(baseUrl, '/api/tasks/teacher/forStatus/$subject');
+
+    status = true;
+    notifyListeners();
     final url =
-        ConectionHost.myUrl('/api/tasks/teacher/forStatus/$subject', {});
+        ConectionHost.myUrl('/api/tasks/teacher/statusTrue/$subject', {});
 
     final resp = await http.get(url, headers: headers);
+    print(resp.body);
 
-    final List<dynamic> respBody = json.decode(resp.body);
-    print('Lista de tareas activas');
-    print(respBody);
+    Map<String, dynamic> respBody = json.decode(resp.body);
 
-    final listTasks = respBody.map((e) => Tasks.fromJson(e)).toList();
-    taskForStatusTrue = [...listTasks];
-    notifyListeners();
+    // creamos los estados http para mostrar los  tipos de error
+
+    if (resp.statusCode == 401) {
+      status = false;
+      statusCode = 401;
+      notifyListeners();
+      return respBody['msg'];
+    }
+
+    if (resp.statusCode == 404) {
+      taskResponse = TaskResponse.fromRawJson(resp.body);
+      taskForStatusTrue = [];
+      status = false;
+      notifyListeners();
+      return taskResponse!.msg;
+    }
+
+    if (resp.statusCode == 200) {
+      // print('Lista de tareas activas');
+      print(respBody);
+      // final listTasks = respBody['task'].map((e) => Tasks.fromJson(e)).toList();
+      taskResponse = TaskResponse.fromRawJson(resp.body);
+
+      final listTasks = taskResponse!.task;
+      taskForStatusTrue = [...listTasks!];
+      status = false;
+      notifyListeners();
+    }
   }
 
-// ststus= true or false
+// status true and false
 // all assigments
-  Future getTask(List<String> subject) async {
+
+  int statusCodes = 0;
+
+  Future<bool> getTask(List<String> idSubjects) async {
     String? token = await storage.read(key: 'token');
 
     final Map<String, String> headers = {
@@ -228,17 +297,48 @@ class TaskServices extends ChangeNotifier {
 
 // url get all taks teacher
     // final url = Uri.http(baseUrl, '/api/tasks/teacher/$subject');
-    final url = ConectionHost.myUrl('/api/tasks/teacher/$subject', {});
+    final url = ConectionHost.myUrl('/api/tasks/teacher/$idSubjects', {});
 
+    status = true;
+    notifyListeners();
     final resp = await http.get(url, headers: headers);
 
-    final List<dynamic> respBody = json.decode(resp.body);
+    Map<String, dynamic> respBody = json.decode(resp.body);
 
-    print(respBody);
+    print(respBody['msg']);
+    // status error del login
 
-    final listTasks = respBody.map((e) => Tasks.fromJson(e)).toList();
-    tasks = [...listTasks];
+    if (resp.statusCode == 401) {
+      /// ceto datos vacios
+      statusCodes = 401;
+      status = false;
+      notifyListeners();
+      return false;
+    }
+
+    if (resp.statusCode == 404) {
+      taskResponse = TaskResponse.fromRawJson(resp.body);
+      status = false;
+      statusCodes = 404;
+      tasks = [];
+      notifyListeners();
+      return true;
+    }
+
+    if (resp.statusCode == 200) {
+      print(respBody);
+      taskResponse = TaskResponse.fromRawJson(resp.body);
+
+      final listTasks = taskResponse!.task;
+      tasks = [...listTasks!];
+      status = false;
+      statusCodes = 200;
+      notifyListeners();
+      return true;
+    }
+    status = false;
     notifyListeners();
+    return false;
   }
 
   // obtener la tareas entrgados por estudiante
@@ -274,5 +374,88 @@ class TaskServices extends ChangeNotifier {
     tasksForSubject = [...taskSuject];
     notifyListeners();
     print(respBody);
+  }
+
+  // int statusCodes = 0;
+  // update taks
+  Future<String> updateTask(Tasks task) async {
+    String? token = await storage.read(key: 'token');
+
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'x-token': token!
+    };
+
+    final url = ConectionHost.myUrl('/api/tasks/${task.id}', {});
+
+    status = true;
+    notifyListeners();
+
+    final resp =
+        await http.put(url, headers: headers, body: json.encode(task.toJson()));
+
+    Map<String, dynamic> respBody = json.decode(resp.body);
+
+// error en el login  o en el servidor
+
+    if (resp.statusCode == 401) {
+      statusCode = 401;
+      notifyListeners();
+      return respBody['msg'];
+    }
+    if (resp.statusCode == 201) {
+      // print(respBody);
+      taskSelected = Tasks.fromJson(respBody['task']);
+      upateListTaks(taskSelected);
+      statusCodes = 201;
+      status = false;
+      notifyListeners();
+    }
+    status = false;
+    notifyListeners();
+    return respBody['msg'];
+  }
+
+  // update file
+
+  // funcion para actualizar las tareas que se ha actualizado
+  // task by status true
+
+  void upateListTaks(Tasks task) {
+    List<Tasks> newListTask = taskForStatusTrue.map((e) {
+      if (e.id == task.id) {
+        e = task;
+      }
+      return e;
+    }).toList();
+    taskForStatusTrue = newListTask;
+    notifyListeners();
+  }
+
+  bool ts = false;
+
+// funtion to filter tasks by subject
+  Future filterTaskBySubject(String subjectId) async {
+    ts = true;
+    notifyListeners();
+
+    taskBySubject = await newListsTasks(tasks, subjectId);
+    ts = false;
+    notifyListeners();
+  }
+
+  Future<List<Tasks?>> newListsTasks(
+      List<Tasks> tasks, String subjectId) async {
+    List<Tasks?> newListTasks = tasks
+        .map((e) {
+          if (e.subject.uid == subjectId) {
+            return e;
+          }
+          // return e;
+        })
+        .where((element) => element != null)
+        .toList();
+
+    return newListTasks;
   }
 }

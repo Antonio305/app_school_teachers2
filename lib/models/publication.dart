@@ -1,5 +1,3 @@
-
-
 import 'dart:convert';
 
 class Publication {
@@ -10,7 +8,7 @@ class Publication {
     this.author,
     this.createdAt,
     this.v,
-     this.description,
+    this.description,
   });
 
   String? id;
@@ -29,8 +27,7 @@ class Publication {
   factory Publication.fromMap(Map<String, dynamic> json) => Publication(
         id: json["_id"],
         title: json["title"],
-        archivos:
-            List<dynamic>.from(json["archivos"].map((x) => x)),
+        archivos: List<dynamic>.from(json["archivos"].map((x) => x)),
         author: Author.fromMap(json["author"]),
         createdAt: DateTime.parse(json["createdAt"]),
         v: json["__v"],
@@ -42,6 +39,42 @@ class Publication {
         "title": title,
         "description": description,
       };
+
+  // Copia de los datos del modello
+  Publication withCopy() => Publication(
+      id: id,
+      title: title,
+      author: author,
+      archivos: archivos,
+      createdAt: createdAt,
+      description: description);
+
+  String authorPubication() {
+    String publicationAuthor = '${author?.name}  ${author?.lastName}';
+    return publicationAuthor;
+  }
+
+  String get authorDetails => '${author!.name} ${author!.lastName}';
+  String get initialNameAuthor =>
+      '${author!.name.substring(0, 1)} ${author!.lastName.substring(0, 1)}';
+
+// RETORNA HACE CUANTOS DIAS SE HA HECHO LA PUBLICACION
+
+// published ago - publicado hace
+  int get publishesAgo {
+    // ccrear un objecto que es la instancia de la fecha de hoy
+
+    DateTime now = DateTime.now();
+    // fecha  entrega de la tarea
+    DateTime ex = createdAt!;
+
+    // comprar la diferencia de dias
+    // se hace con el metodo difference de la clase DateTime
+    Duration duration = ex.difference(now);
+    int missingDays = duration.inDays;
+
+    return missingDays * -1;
+  }
 }
 
 class Author {

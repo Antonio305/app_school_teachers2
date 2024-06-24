@@ -1,9 +1,21 @@
-
-
 import 'dart:convert';
 
-import 'package:preppa_profesores/models/student.dart';
+class RatingResponse {
+  String msg;
+  Ratings? rating;
 
+  /// contructor
+  RatingResponse({required this.msg, required this.rating});
+  // tojson
+  factory RatingResponse.toJson(String str) =>
+      RatingResponse.fromMap(json.decode(str));
+
+  // function factory
+  factory RatingResponse.fromMap(Map<String, dynamic> json) {
+    return RatingResponse(
+        msg: json['msg'], rating: Ratings.fromMap(json['rating']));
+  }
+}
 
 class Ratings {
   Ratings({
@@ -17,12 +29,11 @@ class Ratings {
     required this.parcial2,
     required this.parcial3,
     required this.semesterGrade,
+    required this.generation,
     this.v,
   });
 
   String? id;
-  // String? idStudent;
-  // Students student;
   String student;
   String group;
   String semestre;
@@ -31,6 +42,7 @@ class Ratings {
   double parcial2;
   double semesterGrade;
   double parcial3;
+  String generation;
   int? v;
 
   factory Ratings.fromJson(String str) => Ratings.fromMap(json.decode(str));
@@ -47,6 +59,7 @@ class Ratings {
         parcial2: json["parcial2"].toDouble(),
         parcial3: json["parcial3"].toDouble(),
         semesterGrade: json['semesterGrade'].toDouble(),
+        generation: json['generation'],
         v: json["__v"],
       );
 
@@ -54,7 +67,7 @@ class Ratings {
 
   Map<String, dynamic> toMap() => {
         // "_id": id,
-        
+
         "student": student,
         "group": group,
         "semestre": semestre,
@@ -63,6 +76,17 @@ class Ratings {
         "parcial2": parcial2,
         "parcial3": parcial3,
         "semesterGrade": semesterGrade,
+        'generation': generation
         // "__v": v,
       };
+
+
+  String get semestreGrades {
+    final loongCatacteres = semesterGrade.toString().length;
+
+    // if (loongCatacteres == 3) {
+    //   return semesterGrade.toString();
+    // }
+    return semesterGrade.toString().substring(0, 3);
+  }
 }

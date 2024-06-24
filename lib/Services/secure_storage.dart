@@ -10,7 +10,7 @@ class SecureStorage {
   // creter function que retorna  el storage
 
  static FlutterSecureStorage  storage() {
-    final storage = FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     return storage;
   }
 }

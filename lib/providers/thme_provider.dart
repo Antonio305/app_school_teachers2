@@ -8,37 +8,23 @@ class ThemeProvier extends ChangeNotifier {
 //  recerive theme
   ThemeData currentTheme;
 
-   final mycolor =  const MaterialColor(0xFF0F1123, <int, Color>
-   {
-      50:   Color(0xFF558B2F),
-      100: Color(0xFF558B2F),
-      200: Color(0xFF558B2F),
-      300: Color(0xFF558B2F),
-      400: Color(0xFF558B2F),
-      500: Color(0xFF558B2F),
-      600: Color(0xFF558B2F),
-      700: Color(0xFF558B2F),
-      800: Color(0xFF558B2F),
-      900: Color(0xFF558B2F),
-     
-    },
-  );
-
   // create contructor
   ThemeProvier({required bool isDarkMode})
-        : currentTheme = isDarkMode ? ThemeData.dark( 
-           useMaterial3: true,
-              
-              // primaryColorDark: mycolor,
-              // primarySwatch: mycolor,
-              // scaffoldBackgroundColor: mycolor,
-              // dialogBackgroundColor: Color(0xFF0F1123)
-              
-              ) : ThemeData.light();
+      : currentTheme = isDarkMode
+            ? ThemeData.dark(
+                //  useMaterial3: true,
 
-      // : currentTheme = isDarkMode ? ThemeData( primarySwatch : mycolor) : ThemeData.light();
+                // primaryColorDark: mycolor,
+                // primarySwatch: mycolor,
+                // scaffoldBackgroundColor: mycolor,
+                // dialogBackgroundColor: Color(0xFF0F1123)
 
+                )
+            : ThemeData.light(
+                // useMaterial3: true
+                );
 
+  // : currentTheme = isDarkMode ? ThemeData( primarySwatch : mycolor) : ThemeData.light();
 
   // funtion set state theme
 
@@ -55,6 +41,7 @@ class ThemeProvier extends ChangeNotifier {
   //  para el cambio en  otros widgets,
   //// colo colores en algunos container
   bool isDark = false;
+  
   bool get isDarkTheme {
     return isDark;
   }

@@ -1,6 +1,5 @@
 //  creamos una para mostrar los datos heeee
 
-
 import 'package:flutter/material.dart';
 
 class MenuOptionProvider extends ChangeNotifier {
@@ -103,6 +102,13 @@ class MenuOptionProvider extends ChangeNotifier {
 
   set dropDownMenuItemGeneracion(String value) {
     _gereracion = value;
+    notifyListeners();
+  }
+
+  String _dropDownMenuItemSubject = '';
+  String get dropDownMenuItemSubject => _dropDownMenuItemSubject;
+  set dropDownMenuItemSubject(String value) {
+    _dropDownMenuItemSubject = value;
     notifyListeners();
   }
 

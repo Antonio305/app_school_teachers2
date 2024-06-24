@@ -10,6 +10,8 @@ class StudentAdviserServices extends ChangeNotifier {
   ///
   String baserUrl = ConectionHost.baseUrl;
 
+  late  StudentAdviser studentSelectedByAdbiser;
+
   Map<String, String> headers = {'content-type': 'application/json'};
 
   bool status = false;
@@ -22,7 +24,7 @@ class StudentAdviserServices extends ChangeNotifier {
     // final url = Uri.http(
     //     baserUrl, '/api/student/${generation}/${semestre}/${group}/adviser');
     final url = ConectionHost.myUrl(
-        '/api/student/${generation}/${semestre}/${group}/adviser',{});
+        '/api/student/$generation/$semestre/$group/adviser', {});
 
     status = true;
     notifyListeners();

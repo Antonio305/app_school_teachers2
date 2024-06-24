@@ -11,24 +11,24 @@ LoginResponse loginResponseFromJson(String str) => LoginResponse.fromJson(json.d
 String loginResponseToJson(LoginResponse data) => json.encode(data.toJson());
 
 class LoginResponse {
-    bool ok;
+    bool status;
     String token;
      Teachers teacher;
 
     LoginResponse({
-        required this.ok,
+        required this.status,
         required this.token,
         required this.teacher,
     });
 
     factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
-        ok: json["ok"],
+        status: json["status"],
         token: json["token"],
         teacher: Teachers.fromJson(json["teacher"]),
     );
 
     Map<String, dynamic> toJson() => {
-        "ok": ok,
+        "status": status,
         "token": token,
         "teacher": teacher.toJson(),
     };

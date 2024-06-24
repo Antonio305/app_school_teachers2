@@ -1,125 +1,225 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:preppa_profesores/providers/isMobile.dart';
+import 'package:preppa_profesores/widgets/myScrollConfigure.dart';
 import 'package:provider/provider.dart';
 
 import '../Services/taskReceived.dart';
 import '../Services/task_services.dart';
-import '../models/task.dart';
-import 'dialongEditTask.dart';
+import '../models/task/tasks.dart';
 
-class TaskCard extends StatelessWidget {
-  // final size = MediaQuery.of(context).size;
-  // final taskServices = Provider.of<TaskServices>(context);
-  final List<Tasks> tasks;
-  final int index;
+class TaskCard extends StatefulWidget {
+  final Tasks tasks;
 
-  TaskCard({super.key, required this.tasks, required this.index});
+  const TaskCard({super.key, required this.tasks});
+
+  @override
+  State<TaskCard> createState() => _TaskCardState();
+}
+
+class _TaskCardState extends State<TaskCard> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0XFF131428),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        height: 300,
+    return Card(
+      // borderOnForeground: true,
+      margin: const EdgeInsets.only(bottom: 1),
+      elevation: 1,
+      child: SizedBox(
+        height: 330,
         width: Platform.isAndroid || Platform.isIOS
             // ? 300
-          ?  size.width
-            : 220,
+            ? size.width * 0.95
+            : 270,
         // height: size.height * 0.16,
         // width: size.width * 0.16,
-        child: Center(
-          child: Stack(
-            children: [
-              Positioned(
-                right: 0,
-                top: 0,
-                child: _EditButtom(context),
+        child: Stack(
+          children: [
+            Positioned(
+              right: 5,
+              top: 5,
+              // child: _EditButtom(context),
+              child: CircleAvatar(child: menuTaskOption(context, size)),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  subject(),
+                  group(),
+                  nameTask(),
+                  SizedBox(height: size.height * 0.01),
+                  listFiles(),
+                  buttonSendTask(context),
+                  authoTask(),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Center(
-                      child: Text(tasks[index].subject.name,
-                          style: const TextStyle(
-                              fontSize: 12, color: Color(0xffC9CACF))),
-                    ),
-
-                    Text(tasks[index].group.name,
-                        style: const TextStyle(
-                            fontSize: 14, color: Color(0xff787B9A))),
-
-                    Text(tasks[index].nameTask,
-                        style: const TextStyle(
-                            fontSize: 14, color: Color(0xff787B9A))),
-                    SizedBox(height: size.height * 0.01),
-                    // Text(tasks[index].description,
-                    //     style: const TextStyle(
-                    //         fontSize: 12, color: Color(0xff686B89))),
-
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10, right: 10),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            // color:Colors.red,
-                            borderRadius: BorderRadius.circular(15),
-                            border: Border.all(
-                                color: const Color(0xffC9CACF), width: 0.1)),
-                        child: MaterialButton(
-                          onPressed: () async {
-                            final taskReceived =
-                                Provider.of<TaskReceivedServices>(context,
-                                    listen: false);
-                            await taskReceived
-                                .getIdReceivedTask(tasks[index].id);
-
-                            // ignore: use_build_context_synchronously
-                            Navigator.pushNamed(
-                                context, 'studentTasktReceived');
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Icon(
-                                    Icons.add,
-                                    size: 20,
-                                  ),
-                                  Text('ENTREGADOS',
-                                      style: TextStyle(
-                                          fontSize: 11,
-                                          color: Color(0xffC9CACF))),
-                                  Icon(Icons.chevron_right_rounded, size: 20),
-                                ]),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    Align(
-                        alignment: Alignment.bottomRight,
-                        child: Text(
-                          tasks[index].userTeacher.name +
-                              tasks[index].userTeacher.lastName +
-                              tasks[index].userTeacher.secondName,
-                          style: const TextStyle(
-                              fontSize: 12, color: Color(0xffC9CACF)),
-                        )),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
+    );
+  }
+
+  Text nameTask() {
+    return Text(
+      widget.tasks.nameTask,
+      style: const TextStyle(fontSize: 14),
+      maxLines: 4,
+    );
+  }
+
+  Center subject() {
+    return Center(
+      child: Text(widget.tasks.subject.name,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+    );
+  }
+
+  Row group() {
+    return Row(
+      children: [
+        const Text('Grupo : '),
+        Text(widget.tasks.group.name, style: const TextStyle(fontSize: 14)),
+      ],
+    );
+  }
+
+  Align authoTask() {
+    return Align(
+        alignment: Alignment.bottomRight,
+        child: Text(
+          "${widget.tasks.userTeacher.name}  ${widget.tasks.userTeacher.lastName}  ${widget.tasks.userTeacher.secondName}",
+          style: const TextStyle(fontSize: 14),
+        ));
+  }
+
+  Widget buttonSendTask(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 00),
+      child: ElevatedButton(
+        // elevation: 5,
+        onPressed: () async {
+          final taskReceived =
+              Provider.of<TaskReceivedServices>(context, listen: false);
+          await taskReceived.getIdReceivedTask(widget.tasks.id);
+
+          // ignore: use_build_context_synchronously
+          Navigator.pushNamed(context, 'studentTasktReceived');
+          // ignore: use_build_context_synchronously
+          // Navigator.pushNamed(context, 'taskReceived');
+        },
+        child: const Padding(
+          padding: EdgeInsets.all(8.0),
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Icon(
+              Icons.add,
+              size: 20,
+            ),
+            SizedBox(width: 10),
+            Text('Entregados',
+                style: TextStyle(
+                  fontSize: 14,
+                )),
+            SizedBox(
+              width: 10,
+            ),
+            Icon(Icons.chevron_right_rounded, size: 20),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  SizedBox listFiles() {
+    return SizedBox(
+      height: 39,
+      child: widget.tasks.archivos == null
+          ? const Text('No hay archivos')
+          : MyScrollConfigure(
+              child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: List.generate(
+                      widget.tasks.archivos!.length,
+                      (index) => Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(widget.tasks.archivos![index]),
+                          ))),
+            ),
+    );
+  }
+
+  PopupMenuButton<String> menuTaskOption(BuildContext context, Size size) {
+    return PopupMenuButton(
+      // texto que se muiestra cuando se para el cursor de raton....
+      tooltip: 'Mostrar menu',
+      icon: const Icon(Icons.more_vert),
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          onTap: () {
+            // final taskServices =
+            //     Provider.of<TaskServices>(context, listen: false);
+
+            // taskServices.taskSelected = widget.tasks;
+
+            // Navigator.pushNamed(context, 'edit_task');
+          },
+          value: '1',
+          child: const Text('Editar tarea'),
+        ),
+        const PopupMenuItem(
+          value: '2',
+          child: Text('Eliminar tarea'),
+        )
+      ],
+      onSelected: (value) {
+        // print('Seleccionó la opción: $value');
+        switch (value) {
+          case '1':
+            final taskServices =
+                Provider.of<TaskServices>(context, listen: false);
+            taskServices.taskSelected = widget.tasks;
+            Navigator.pushNamed(context, 'edit_task');
+            break;
+          case '2':
+            confirmTaskDeletion(context, size);
+            break;
+          case '3':
+            final taskServices =
+                Provider.of<TaskServices>(context, listen: false);
+            taskServices.taskSelected = widget.tasks.withCopy();
+
+            Navigator.pushNamed(context, 'show_task');
+          default:
+        }
+      },
+    );
+  }
+
+  Future<dynamic> confirmTaskDeletion(BuildContext context, Size size) {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+          icon: const Icon(Icons.delete),
+          // title: const Text('Confirmación'),
+          content: SizedBox(
+            width: IsMobile.isMobile() ? size.width : size.width / 3,
+            child: Text(
+                '¿Está seguro de que desea eliminar esta tarea (${widget.tasks.nameTask}) de la Materia ${widget.tasks.subject.name} ?'),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Cancelar')),
+            TextButton(onPressed: () {}, child: const Text('Confirmar'))
+          ]),
     );
   }
 
@@ -140,9 +240,20 @@ class TaskCard extends StatelessWidget {
         size: 20,
       ),
       onPressed: () {
-        // print(data[index].id);
+        // print(data.id);
         // openDialogEditTask(context);
-        ShowDialogEditTask.openDialogEditTask(context);
+        // ShowDialogEditTask.openDialogEditTask(context);
+        // final taskServices = Provider.of<TaskServices>(context, listen: false);
+
+        // taskServices.taskSelected = tasks;
+
+        // Navigator.pushNamed(context, 'edit_task');
+
+        // showModalBottomSheet(
+        //   context: context,
+        //   builder: (context) => MyBottomSheet(),
+        // );
+        optionTask(context);
       },
       minWidth: 40,
       height: 40,
@@ -151,5 +262,36 @@ class TaskCard extends StatelessWidget {
       // color: Color(0xff0F1222),
       //rgb(255,139,101)
     );
+  }
+
+  Future<dynamic> optionTask(BuildContext context) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (builder) {
+          return Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(19),
+              // color: Colors.green,
+            ),
+            height: 350.0,
+            child: Center(
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Text("Opciones de la tarea",
+                      textScaleFactor: 2,
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold)),
+                  TextButton(
+                      onPressed: () {}, child: const Text('Eliminar tarea')),
+                  TextButton(
+                      onPressed: () {}, child: const Text('Eliminar tarea'))
+                ],
+              ),
+            ),
+          );
+        });
   }
 }

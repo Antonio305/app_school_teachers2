@@ -8,7 +8,7 @@ class CardPublication extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(children: [
+      child: const Column(children: [
          Text('Titulo dde la publicacion'),
       ]),
     );

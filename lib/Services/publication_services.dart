@@ -8,12 +8,14 @@ import '../models/host.dart';
 import '../models/publication.dart';
 
 class PublicationServices extends ChangeNotifier {
+  late Publication publicationSelected;
+
   //  url
   String baseUrl = ConectionHost.baseUrl;
 
   Map<String, String> headers = {'Content-Type': 'application/json'};
 
-  List<Publication> publication = [];
+  List<Publication> publications = [];
 
   // instance storage
   final storage = SecureStorage.storage();
@@ -27,13 +29,14 @@ class PublicationServices extends ChangeNotifier {
   // all publication by pagination
 
   Future allPublicationByPagination() async {
+    
     String? token = await storage.read(key: 'token');
     // int paginations = 1;
 
     status = true;
     notifyListeners();
     paginations++;
-    print('paginations' + paginations.toString());
+    print('paginations$paginations');
 
     final headers = {'Content-Type': 'application/json', 'x-token': token!};
 
@@ -41,35 +44,33 @@ class PublicationServices extends ChangeNotifier {
     final url = Uri.http(baseUrl, '/api/publication/public',
         {'pagination': paginations.toString()});
 
-  // final url = ConectionHost.myUrl('/api/publication/public',
-  //       {'pagination': paginations.toString()});
-
+    // final url = ConectionHost.myUrl('/api/publication/public',
+    //       {'pagination': paginations.toString()});
 
     final resp = await http.get(url, headers: headers);
     // print(url);
-    // print(resp.body);
+    print(resp.body);
 
     final List<dynamic> respBody = json.decode(resp.body);
 
-    final _publication = respBody.map((e) => Publication.fromMap(e)).toList();
-    publication = [...publication, ..._publication];
-    notifyListeners();
-    print(respBody);
+    List<Publication> publication =
+        respBody.map((e) => Publication.fromMap(e)).toList();
 
+    publications = [...publication];
     status = false;
     notifyListeners();
+    print('Total de publicaciones  ${publications.length}');
   }
 
   Future allPublication() async {
-
     // final url = Uri.http(baseUrl, '/api/publication');
- final url = ConectionHost.myUrl('/api/publication',{});
+    final url = ConectionHost.myUrl('/api/publication', {});
     final resp = await http.get(url, headers: headers);
 
     final List<dynamic> respBody = json.decode(resp.body);
 
-    final _publication = respBody.map((e) => Publication.fromMap(e)).toList();
-    publication = [..._publication];
+    publications = respBody.map((e) => Publication.fromMap(e)).toList();
+    // publication = [...publication];
     notifyListeners();
     print(respBody);
   }
@@ -80,7 +81,7 @@ class PublicationServices extends ChangeNotifier {
   // create publicatio
   Future<String> createPublication(String title, String description) async {
     // final url = Uri.http(baseUrl, '/api/publication');
-     final url = ConectionHost.myUrl('/api/publication',{});
+    final url = ConectionHost.myUrl('/api/publication', {});
 
     String? token = await storage.read(key: 'token');
 
@@ -96,9 +97,8 @@ class PublicationServices extends ChangeNotifier {
 
   // update publication
   Future updateaPublication(Publication publication) async {
-
     // final url = Uri.http(baseUrl, '/api/publication/${publication.id}');
-     final url = ConectionHost.myUrl('/api/publication/${publication.id}',{});
+    final url = ConectionHost.myUrl('/api/publication/${publication.id}', {});
 
     String? token = await storage.read(key: 'token');
 

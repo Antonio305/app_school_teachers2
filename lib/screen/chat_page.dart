@@ -5,15 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:preppa_profesores/Services/Services.dart';
 import 'package:preppa_profesores/Services/chat/chat_services.dart';
 import 'package:preppa_profesores/Services/chat/socket_servives.dart';
-import 'package:preppa_profesores/Services/group_services.dart';
-import 'package:preppa_profesores/Services/student_services.dart';
 import 'package:preppa_profesores/models/chat/messages.dart';
 import 'package:preppa_profesores/models/subjects.dart';
-import 'package:preppa_profesores/screen/chat/chat_page2.dart';
+import 'package:preppa_profesores/providers/isMobile.dart';
+import 'package:preppa_profesores/widgets/utils/style_ElevatedButton.dart';
 import 'package:provider/provider.dart';
 
-import '../Services/subject_services.dart';
-import '../models/group.dart';
 import 'chat/chat_message.dart';
 
 class ChatPage extends StatefulWidget {
@@ -24,7 +21,7 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
-  List<ChatMessage> _messages = [];
+  final List<ChatMessage> _messages = [];
 
   bool status = false;
 
@@ -69,128 +66,179 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     return Scaffold(
       // appBar: AppBar(title: const Text('Chats')),
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Text('Selecciona el grupo'),
-          Center(
-            child: _listSubject(subjects, size),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        padding: IsMobile.isMobile()
+            ? const EdgeInsets.symmetric(horizontal: 8)
+            : const EdgeInsets.symmetric(horizontal: 38),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              ListStudent(studentSubjectsServices, size),
-              status == false
-                  ? Container(
-                      // color: Colors.red,
-                      // width: double.infinity,
-                      width: Platform.isAndroid || Platform.isIOS
-                          ? size.width * 0.99
-                          // ? 500
-                          : size.width * 0.45,
-                      height: size.height * 0.5,
-                      // color: Colors.red,
-                      decoration: BoxDecoration(
-                        color: const Color(0xff13162C).withOpacity(0.4),
-                        borderRadius: BorderRadius.circular(10),
+              const SizedBox(
+                height: 30,
+              ),
+              Text('Chats',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 45,
+                    letterSpacing: 2,
+                    shadows: [
+                      Shadow(
+                        color: Colors.indigo.withOpacity(0.5),
+                        offset: const Offset(1, 1),
+                        blurRadius: 1,
                       ),
-                    )
-                  : ChatPageBody(messages: _messages)
-            ],
-          )
-        ]),
+                    ],
+                  )),
+              const SizedBox(
+                height: 20,
+              ),
+              _listSubject(subjects, size),
+              const SizedBox(
+                height: 10,
+              ),
+              // IsMobile.isMobile()
+              //     ? Row(
+              //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //         children: [
+              //           ListStudent(studentSubjectsServices, size),
+              //           status == false
+              //               ? Container(
+              //                   // color: Colors.red,
+              //                   // width: double.infinity,
+              //                   width: Platform.isAndroid || Platform.isIOS
+              //                       ? size.width * 0.9
+              //                       // ? 500
+              //                       : size.width * 0.45,
+              //                   height: size.height * 0.5,
+              //                   // color: Colors.red,
+              //                   decoration: BoxDecoration(
+              //                     color:
+              //                         const Color(0xff13162C).withOpacity(0.4),
+              //                     borderRadius: BorderRadius.circular(10),
+              //                   ),
+              //                 )
+              //               : ChatPageBody(messages: _messages)
+              //         ],
+              //       )
+              //     :
+
+              ListStudent(studentSubjectsServices, size),
+            ]),
       ),
     );
   }
 
-  Container ListStudent(StudentServices studentSubjectsServices, Size size) {
+  Flexible ListStudent(StudentServices studentSubjectsServices, Size size) {
     final student = studentSubjectsServices.studentBySubject;
-    return Container(
-      // color: Colors.red,
-      // width: double.infinity,
-      width: Platform.isAndroid || Platform.isIOS
-          ? size.width * 0.99
-          // ? 500
-          : size.width * 0.25,
-      height: size.height * 0.75,
-      decoration: BoxDecoration(
-        color: const Color(0xff13162C).withOpacity(0.4),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: studentSubjectsServices.status == true
-          ? const Center(child: CircularProgressIndicator())
-          : student.isEmpty
-              ? Center(
-                  child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/search.png', width: 150, height: 150),
-                    const Text('LISTA VACIA - SELECCIONAR MATERIA Y GRUPO'),
-                  ],
-                ))
-              : ListView.builder(
-                  // shrinkWrap: true,
-                  itemCount: student.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return GestureDetector(
-                      onTap: () async {
-                        final chatServices =
-                            Provider.of<ChatServices>(context, listen: false);
-                        chatServices.userPara = student[index];
-                        status = true;
-                        setState(() {
-                          indexSelectedStudent = index;
-                        });
+    return Flexible(
+      child: Container(
+        // color: Colors.red,
+        // width: double.infinity,
+        // width: IsMobile.isMobile() ? size.width * 0.9 : size.width * 0.5,
+        // // ? 500
+        // height: IsMobile.isMobile() ? size.height * 0.68 : size.height * 0.7,
+        decoration: BoxDecoration(
+          // color: const Color(0xff13162C).withOpacity(0.4),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: studentSubjectsServices.status == true
+            ? const Center(child: CircularProgressIndicator())
+            : student.isEmpty
+                ? Center(
+                    child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset('assets/search.png', width: 150, height: 150),
+                      const Text('LISTA VACIA - SELECCIONAR MATERIA Y GRUPO'),
+                    ],
+                  ))
+                : ListView.builder(
+                    // shrinkWrap: true,
+                    itemCount: student.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return GestureDetector(
+                        onTap: () async {
+                          /**
+                           * windows y mac , cargar os archivos desde aca
+                           */
 
-                        /**
-                         * windows y mac , cargar os archivos desde aca
-                         */
+                          // Students? userPara;
 
-                        // Students? userPara;
-                        cargarChat(student[index].uid);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 5),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: indexSelectedStudent == index
-                                ? Colors.red
-                                : Colors.transparent,
-                            border:
-                                Border.all(width: 0.5, color: Colors.white10),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                Text(index.toString(),
-                                    style:
-                                        const TextStyle(color: Colors.white54)),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                    "${student[index].name}  ${student[index].lastName}  ${student[index].secondName}",
-                                    style:
-                                        const TextStyle(color: Colors.white54)),
-                              ],
+                          // SI ESTAMOS EL WIJDOS SOLO CARGAMOS LOS CHATS, PEROSI ESTAMOS EN UN MOVIL
+                          // HACMEOS LA NAVEGACION A LA OTRA VISTA Y CARGAS LOS CHATS DE ESA VISTA
+                          final chatServices =
+                              Provider.of<ChatServices>(context, listen: false);
+
+                          // if (IsMobile.isMobile() == true) {
+                          // chatServices.userPara = student[index];
+                          // status = true;
+                          // setState(() {
+                          //   indexSelectedStudent = index;
+                          // });
+                          // cargarChat(student[index].uid);
+
+                          // return;
+                          // }
+
+                          chatServices.userPara = student[index];
+                          setState(() {
+                            indexSelectedStudent = index;
+                          });
+
+                          Navigator.pushNamed(context, 'chats_movil');
+                          chatServices.userPara = student[index];
+
+                          // ChatPageBody
+                          // Navigator.pu
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 0, vertical: 5),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: indexSelectedStudent == index
+                                  ? Colors.purple.withOpacity(0.7)
+                                  : Colors.transparent,
+                              border:
+                                  Border.all(width: 0.5, color: Colors.white10),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 18,
+                                    child: Text(student[index].name,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                        )),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(student[index].name
+                                      // "${student[index].name}  ${student[index].lastName}  ${student[index].secondName}",
+                                      // style:
+                                      //     const TextStyle(color: Colors.white54)
+                                      ),
+                                  const Spacer(),
+                                  const Icon(Icons.chevron_right_rounded)
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
+                      );
+                    },
+                  ),
+      ),
     );
   }
 
-  Container _listSubject(List<Subjects> subjects, Size size) {
-    return Container(
+  SizedBox _listSubject(List<Subjects> subjects, Size size) {
+    return SizedBox(
       // color: Colors.red,
       // width: 700,
       height: 50,
@@ -201,8 +249,9 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
         // itemCount: 5,
         itemBuilder: (BuildContext context, int index) {
           return Card(
-            color:
-                indexSubjectSelected == index ? Colors.lightBlue : Colors.transparent,
+            color: indexSubjectSelected == index
+                ? Colors.indigo.withOpacity(0.5)
+                : Colors.transparent,
             semanticContainer: true,
             child: MaterialButton(
               onPressed: () async {
@@ -216,7 +265,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                   padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
                     height: size.height * 0.13,
-                    width: size.width * 0.14,
+                    // width: size.width * 0.14,
                     child: Center(
                         child: Text(subjects[index].name,
                             style: const TextStyle(color: Colors.white54))),
@@ -242,26 +291,19 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           builder: (context) {
             return Center(
               child: AlertDialog(
+                icon: const Icon(Icons.subject),
+                title: const Text('Seleciona un grupo'),
                 content: ContentSelectGroup(subject: subject),
+                actionsAlignment: MainAxisAlignment.center,
                 actions: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      MaterialButton(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          color: Colors.black,
-                          onPressed: () async {
-                            Navigator.pop(context);
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.only(left: 35, right: 35),
-                            child: Text('CANCELAR',
-                                style: TextStyle(color: Colors.white)),
-                          )),
-                    ],
-                  )
+                  ElevatedButton(
+                      style: StyleElevatedButton.styleButton,
+                      onPressed: () async {
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        'Salir',
+                      ))
                 ],
               ),
             );
@@ -271,7 +313,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 class ContentSelectGroup extends StatefulWidget {
   final Subjects subject;
 
-  ContentSelectGroup({super.key, required this.subject});
+  const ContentSelectGroup({super.key, required this.subject});
   @override
   State<ContentSelectGroup> createState() => _SelectGroupState();
 }
@@ -285,52 +327,36 @@ class _SelectGroupState extends State<ContentSelectGroup> {
     final groups = groupServider.group;
     final size = MediaQuery.of(context).size;
 
-    return Container(
-      // width: 200,
-      height: size.height / 3,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            // seleciona una de tus gropos
-            const Text('Seleciona un grupo'),
-            Wrap(
-              children: List.generate(groups.groups.length, (index) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    // style: StyleElevatedButton.styleButton,
-                    onPressed: () async {
-                      setState(() {});
-                      // widget.group = groups.groups[index];
-                      final studentServices =
-                          Provider.of<StudentServices>(context, listen: false);
+    return Wrap(
+      children: List.generate(groups.groups.length, (index) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ElevatedButton(
+            style: StyleElevatedButton.styleButton,
+            onPressed: () async {
+              setState(() {});
+              // widget.group = groups.groups[index];
+              final studentServices =
+                  Provider.of<StudentServices>(context, listen: false);
 
-                      Navigator.pop(context);
-                      await studentServices.getStudentForGroupAndSubject(
-                          groups.groups[index].uid, widget.subject.uid);
-                      // ignore: use_build_context_synchronously
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        width: 50,
-                        height: 30,
-                        child: Center(child: Text(groups.groups[index].name)),
-                      ),
-                    ),
-                  ),
-                );
-              }),
+              Navigator.pop(context);
+              await studentServices.getStudentForGroupAndSubject(
+                  groups.groups[index].uid, widget.subject.uid);
+              // ignore: use_build_context_synchronously
+            },
+            child: Text(
+              groups.groups[index].name,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      }),
     );
   }
 }
 
 // clase para contener la lista de mensajes
+
 class ChatPageBody extends StatefulWidget {
   final List<ChatMessage> messages;
 
@@ -347,7 +373,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
   final TextEditingController _textController = TextEditingController();
 
   // controlador para el focus nods
-  final _focusNode = new FocusNode();
+  final _focusNode = FocusNode();
 
   // creo  una lista de chat Message
   // List<ChatMessage> _messages = [];
@@ -382,7 +408,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
 
   // craer un function
   void _escucharMensaje(dynamic payload) {
-    print('tengo mensaje de : ${payload}');
+    print('tengo mensaje de : $payload');
     ChatMessage message = ChatMessage(
       text: payload['message'],
       uid: payload['de'],
@@ -422,7 +448,8 @@ class _ChatPageBodyState extends State<ChatPageBody>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Container(
+
+    return SizedBox(
       width: size.width * 0.43,
       // height: 300,
       height: size.height * 0.75,
@@ -440,7 +467,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
         ),
 
         /// caja de texto
-        Divider(
+        const Divider(
           height: 1,
         ),
 
@@ -456,7 +483,7 @@ class _ChatPageBodyState extends State<ChatPageBody>
                   child: TextField(
                     focusNode: _focusNode,
                     decoration: const InputDecoration.collapsed(
-                        hintText: 'Enviar mensjae'),
+                        hintText: 'Enviar mensaje'),
                     controller: _textController,
                     // solo agrego la referencia
                     onSubmitted: _haldleSubmit,
@@ -477,10 +504,10 @@ class _ChatPageBodyState extends State<ChatPageBody>
                 Container(
                   child: Platform.isIOS
                       ? CupertinoButton(
-                          child: const Text('Send'),
                           onPressed: writing
                               ? () => _haldleSubmit(_textController.text)
                               : null,
+                          child: const Text('Send'),
                         )
                       : IconButton(
                           onPressed: writing
@@ -550,7 +577,9 @@ class _ChatPageBodyState extends State<ChatPageBody>
     for (ChatMessage message in widget.messages) {
       message.animationController.dispose();
     }
+    // si no cierro wl socker puedo enviarle menaje a todo el mundo
     socketService.socket.off('mensaje-personal');
+
     super.dispose();
   }
 }

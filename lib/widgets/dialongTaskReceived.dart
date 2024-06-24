@@ -87,7 +87,9 @@ class _ContentTaskState extends State<ContentTask> {
             child: Column(
               children: [
                 TextFormField(
-                  validator: (value) {},
+                  validator: (value) {
+                    return null;
+                  },
                   onChanged: (String value) {
                     // setState(() {});
 
@@ -107,7 +109,9 @@ class _ContentTaskState extends State<ContentTask> {
                   height: size.height * 0.05,
                 ),
                 TextFormField(
-                  validator: (value) {},
+                  validator: (value) {
+                    return null;
+                  },
 
                   // maxLines: 5,
 
@@ -128,7 +132,7 @@ class _ContentTaskState extends State<ContentTask> {
               ],
             ),
           ),
-          widgetOpload(file: file!),
+          widgetOpload(file: file),
         ],
       ),
     );
@@ -157,7 +161,7 @@ class _widgetOploadState extends State<widgetOpload> {
         DropTarget(
           onDragDone: (details) async {
             widget.file.addAll(details.files);
-            print('nombre del archivo' + details.files[0].name);
+            print('nombre del archivo${details.files[0].name}');
 
             final createTask =
                 Provider.of<TaskServices>(context, listen: false);
@@ -181,8 +185,8 @@ class _widgetOploadState extends State<widgetOpload> {
                 height: 250,
                 child: Center(
                   child: isDragging == false
-                      ? Text('ARRARTRE EL ARCHIVO ACA')
-                      : Text('AGREGANDO ARCHIVO....'),
+                      ? const Text('ARRARTRE EL ARCHIVO ACA')
+                      : const Text('AGREGANDO ARCHIVO....'),
                 ),
               ),
             ],
@@ -218,7 +222,7 @@ class _widgetOploadState extends State<widgetOpload> {
     final typeExtends = url.path.split('.');
     final extend = typeExtends[typeExtends.length - 1];
 
-    print('Typo de extension de la imagen' + extend);
+    print('Typo de extension de la imagen$extend');
 
     return Row(
       children: [

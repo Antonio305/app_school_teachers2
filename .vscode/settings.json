@@ -1,5 +1,11 @@
 {
      "dart.flutterCreateOrganization": null,
      "dart.flutterScreenshotPath": null,
-     "dart.offline": true
+     "dart.offline": true,
+     "workbench.hover.delay": 100,
+     "workbench.sash.hoverDelay": 200,
+     "screencastMode.keyboardOverlayTimeout": 500,
+     "window.density.editorTabHeight": "default"
+
+
 }

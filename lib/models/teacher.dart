@@ -10,9 +10,11 @@ class Teachers {
     required this.typeContract,
     required this.status,
     required this.rol,
-    this.numberPhone,
-    this.email,
     required this.tuition,
+    this.email,
+    this.numberPhone,
+    // required this.updatedAt,
+    this.userLogin,
     required this.uid,
   });
 
@@ -27,6 +29,8 @@ class Teachers {
   String? numberPhone;
   String? email;
   String tuition;
+  // DateTime updatedAt;
+  String? userLogin;
   String uid;
 
   factory Teachers.fromRawJson(String str) =>
@@ -44,6 +48,8 @@ class Teachers {
         status: json["status"],
         rol: json["rol"],
         tuition: json["tuition"],
+        // updatedAt: DateTime.parse(json['updateAt']),
+        userLogin: json['userLogin'],
         uid: json["uid"],
       );
 
@@ -59,4 +65,6 @@ class Teachers {
         "tuition": tuition,
         "uid": uid,
       };
+
+  String get nameTeacher => '$name $lastName $secondName';
 }

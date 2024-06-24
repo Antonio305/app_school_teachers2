@@ -1,26 +1,20 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:preppa_profesores/Services/Services.dart';
-import 'package:preppa_profesores/Services/rating_services.dart';
 import 'package:preppa_profesores/Services/task_services.dart';
-import 'package:preppa_profesores/models/teacher.dart';
+import 'package:preppa_profesores/providers/isMobile.dart';
 import 'package:preppa_profesores/screen/profile.dart';
-import 'package:preppa_profesores/screen/student.dart';
+import 'package:preppa_profesores/screen/student/student.dart';
 import 'package:preppa_profesores/screen/tutor.dart';
 import 'package:provider/provider.dart';
 import 'package:preppa_profesores/providers/menu_option_provider.dart';
 
-import '../Services/adviseAndTutor.dart';
 import '../screen/group.dart';
 import '../screen/homa_page.dart';
-import '../screen/horarios.dart';
-import '../screen/task.dart';
+import '../screen/task/task.dart';
 
 class Content extends StatelessWidget {
-  final Size size;
+  const Content({super.key});
 
-  const Content({super.key, required this.size});
   @override
   Widget build(BuildContext context) {
 //  intancia del provider
@@ -28,22 +22,14 @@ class Content extends StatelessWidget {
     final menuProvider = Provider.of<MenuOptionProvider>(context);
 
     final size = MediaQuery.of(context).size;
-    return  Container(
-        // margin: const EdgeInsets.all(10),
-        // width: size.width * 0.76,
 
-        width: Platform.isMacOS || Platform.isWindows
-            ? size.width * 0.74
-            : size.width,
-
-        // width:  double.infinity,
-        height: size.height * 5,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          // color: Color(0xFF0F1123),
-        ),
-        // child:
-        child: const Menus(),
+    return Container(
+      // color: Color(0xffD3D3D3),
+      width: IsMobile.isMobile()
+          ? size.width
+          // ? size.width
+          : size.width * 0.79,
+      child: const SafeArea(child: Menus()),
     );
   }
 }
@@ -66,18 +52,34 @@ class _MenusState extends State<Menus> {
     // get teask
     final taskServices = Provider.of<TaskServices>(context, listen: false);
 
+    final subjectServices =
+        Provider.of<SubjectServices>(context, listen: false);
+
+    // final taskServices = Provider.of<TaskServices>(context, listen: false);
+
+    final subjects = subjectServices.subjects;
+
     switch (menuProvider.itemMenuGet) {
       case 0:
         // subjectServices.getSubjectsForTeacher();j
         return const HomePage2();
       case 1:
+        if (subjects.isEmpty) {
+          return const NotSubjects();
+        }
         return const ScreenStudent();
 
       case 2:
+        if (subjects.isEmpty) {
+          return const NotSubjects();
+        }
         return const ScreenTask();
         break;
-        
+
       case 3:
+        if (subjects.isEmpty) {
+          return const NotSubjects();
+        }
         return const ScreenChat();
         break;
       case 4:
@@ -86,10 +88,69 @@ class _MenusState extends State<Menus> {
       case 5:
         return const ProfileTeacher();
 
-      // case 5:
-      //   return const TutorScreen();
+      case 6:
+        return const TutorScreen();
       default:
         return const HomePage2();
     }
+  }
+}
+
+class NotSubjects extends StatefulWidget {
+  const NotSubjects({
+    super.key,
+  });
+
+  @override
+  State<NotSubjects> createState() => _NotSubjectsState();
+}
+
+class _NotSubjectsState extends State<NotSubjects>
+    with SingleTickerProviderStateMixin {
+// contrlador par las animaciones
+  late AnimationController _controller;
+
+// inicializamos
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+        // Duracin de la animacion
+        duration: const Duration(seconds: 5),
+        vsync: this);
+    _controller.addListener(() {
+      setState(() {});
+    });
+
+    _controller.repeat();
+    // _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    // hace que al salir de la vista se elimine la animacion
+    _controller.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset('assets/show_student.png'),
+        const SizedBox(height: 20),
+        AnimatedBuilder(
+            animation: _controller,
+            builder: (BuildContext context, Widget? child) {
+              return Text(
+                'No tienes materias agregado'
+                , style: TextStyle(fontSize: 18)
+                // style: TextStyle(fontSize: _controller.value * 30, textBaseline: TextBaseline.alphabetic),
+              );
+            }),
+      ],
+    );
   }
 }

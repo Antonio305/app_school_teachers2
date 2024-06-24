@@ -4,9 +4,10 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:preppa_profesores/Services/files_services.dart';
 
 class Horarios extends StatelessWidget {
+  const Horarios({super.key});
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -27,7 +28,7 @@ class Horarios extends StatelessWidget {
                 downloadImage(url);
                 print('Descargado');
               },
-              child: Text('descargar'),
+              child: const Text('descargar'),
             ),
             const Text('Descargar'),
             Container(
